@@ -1,27 +1,21 @@
 import express = require("express");
 import { graphqlHTTP } from "express-graphql";
 const schema = require("./schema/schema");
-const MongoClient = require("mongodb").MongoClient;
-
-const uri =
-  "mongodb+srv://ferhat_31:deliall50@gql-ferhat.wnp3x.mongodb.net/gql-ferhat?retryWrites=true&w=majority";
-const client = new MongoClient(uri, { useNewUrlParser: true });
-
-client.connect((err: Error) => {
-  const collection = client.db("test").collection("devices");
-
-  console.log("Connected to database");
-
-  if (err) console.error(err.message);
-
-  // perform actions on the collection object
-  client.close();
-});
+const cors = require("cors");
+const mongoose = require("mongoose");
 
 const app = express();
 
-app.use("/graphql", graphqlHTTP({ schema, graphiql: true }));
+// allow cross-origin requests
+app.use(cors());
 
-app.listen(4000, () => {
-  console.log("Running on port 4000");
+const uri =
+  "mongodb+srv://ferhat_31:deliall50@gql-ferhat.wnp3x.mongodb.net/books-db?retryWrites=true&w=majority";
+
+mongoose.connect(uri);
+mongoose.connection.once("open", () => {
+  console.log("Connected to database");
 });
+
+app.use("/graphql", graphqlHTTP({ schema, graphiql: true }));
+app.listen(4000, () => console.log("Running on port 4000"));
