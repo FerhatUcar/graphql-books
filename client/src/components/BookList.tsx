@@ -1,16 +1,28 @@
-import React, { FC, useCallback, useState } from "react";
+import React, {
+  FC,
+  PropsWithChildren,
+  ReactNode,
+  useCallback,
+  useState,
+} from "react";
 import { graphql } from "react-apollo";
 import { getBooksQuery } from "../queries/queries";
 import BookDetails from "./BookDetails";
 
-const BookList: FC = (props: any): JSX.Element => {
+interface BookType {
+  id?: number | null;
+  name?: ReactNode | undefined;
+  selected: number | undefined | null;
+}
+
+const BookList: FC = (props: PropsWithChildren<any>): JSX.Element => {
   const { data } = props;
-  const [state, setState] = useState({
+  const [state, setState] = useState<BookType>({
     selected: null,
   });
 
   const selectBook = useCallback(
-    (book) => {
+    (book: BookType) => {
       setState({ selected: book.id });
     },
     [setState]
@@ -22,7 +34,7 @@ const BookList: FC = (props: any): JSX.Element => {
         {data.loading ? (
           <div>Loading books...</div>
         ) : (
-          data.books.map((book: any) => {
+          data.books.map((book: BookType) => {
             return (
               <li key={book.id} onClick={() => selectBook(book)}>
                 {book.name}

@@ -9,7 +9,7 @@ body{
 }
 
 #main{
-    padding: 0px;
+    padding: 0;
     box-sizing: border-box;
     width: 60%;
     height: 100%;
@@ -81,4 +81,12 @@ form button{
     box-shadow: -2px -3px 5px rgba(0,0,0,0.3);
     box-sizing: border-box;
     color: #fff;
+}
+
+.error {
+    border: solid 2px #ae0000;
+}
+
+.input {
+    border: solid 2px #323232;
 }

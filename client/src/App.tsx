@@ -11,16 +11,16 @@ const client = new ApolloClient({
   uri: "http://localhost:4000/graphql",
 });
 
-function App() {
+const App = () => {
   return (
     <ApolloProvider client={client}>
-      <div id="main">
+      <main id="main">
         <h1>Book app</h1>
         <BookList />
         <AddBook />
-      </div>
+      </main>
     </ApolloProvider>
   );
-}
+};
 
 export default App;
