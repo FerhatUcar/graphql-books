@@ -14,9 +14,12 @@ const AddBook = (props: any): JSX.Element => {
     genre: "",
     authorId: "",
   });
-  const [nameError, setNameError] = useState(false);
-  const [genreError, setGenreError] = useState(false);
-  const [authorError, setAuthorError] = useState(false);
+
+  const [error, setError] = useState({
+    name: false,
+    genre: false,
+    authorId: false,
+  });
 
   const displayAuthors = () => {
     const data = props.getAuthorsQuery;
@@ -40,43 +43,44 @@ const AddBook = (props: any): JSX.Element => {
 
       e.preventDefault();
 
-      if (name === "") setNameError(true);
-      if (genre === "") setGenreError(true);
-      if (authorId === "") {
-        setAuthorError(true);
-        return;
+      if (name === "") {
+        setError({ ...error, name: true });
+      } else if (genre === "") {
+        setError({ ...error, genre: true });
+      } else if (authorId === "") {
+        setError({ ...error, authorId: true });
+      } else {
+        props.addBookMutation({
+          variables: { name, genre, authorId },
+          refetchQueries: [{ query: getBooksQuery }],
+        });
       }
-
-      props.addBookMutation({
-        variables: { name, genre, authorId },
-        refetchQueries: [{ query: getBooksQuery }],
-      });
     },
-    [props, state]
+    [props, state, error]
   );
 
   const addBookName = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       setState({ ...state, name: e.target.value });
-      setNameError(false);
+      setError({ ...error, name: false });
     },
-    [state, setState]
+    [state, setState, error]
   );
 
   const addGenreName = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       setState({ ...state, genre: e.target.value });
-      setGenreError(false);
+      setError({ ...error, genre: false });
     },
-    [state, setState]
+    [state, setState, error]
   );
 
   const addAuthor = useCallback(
     (e: ChangeEvent<HTMLSelectElement>) => {
       setState({ ...state, authorId: e.target.value });
-      setAuthorError(false);
+      setError({ ...error, authorId: false });
     },
-    [state, setState]
+    [state, setState, error]
   );
 
   return (
@@ -84,7 +88,7 @@ const AddBook = (props: any): JSX.Element => {
       <div className="field">
         <label>Book name:</label>
         <input
-          className={nameError ? "error" : "input"}
+          className={error.name ? "error" : "input"}
           type="text"
           onChange={(e) => addBookName(e)}
         />
@@ -92,7 +96,7 @@ const AddBook = (props: any): JSX.Element => {
       <div className="field">
         <label>Genre:</label>
         <input
-          className={genreError ? "error" : "input"}
+          className={error.genre ? "error" : "input"}
           type="text"
           onChange={(e) => addGenreName(e)}
         />
@@ -100,7 +104,7 @@ const AddBook = (props: any): JSX.Element => {
       <div className="field">
         <label>Author:</label>
         <select
-          className={authorError ? "error" : "input"}
+          className={error.authorId ? "error" : "input"}
           onChange={(e) => addAuthor(e)}
         >
           <option>Select author</option>

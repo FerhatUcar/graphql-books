@@ -1,14 +1,41 @@
-import React from "react";
+import React, { createRef, LegacyRef, useEffect } from "react";
 import { graphql } from "react-apollo";
 import { getBookQuery } from "../queries/queries";
 
-const BookDetails = (props: any): JSX.Element => {
-  const { book } = props.data;
+interface IBookDetails {
+  data: {
+    book: {
+      name: string;
+      genre: string;
+      author: {
+        name: string;
+        books: string[];
+      };
+    };
+  };
+  change: boolean;
+}
+
+const BookDetails = ({ data, change }: IBookDetails): JSX.Element => {
+  const ref: LegacyRef<HTMLDivElement> = createRef();
+  const { book } = data;
+
+  // @ts-ignore
+  useEffect(() => {
+    const div = ref.current;
+    div && div.classList.remove("fade");
+
+    if (change) {
+      setTimeout(() => {
+        div && div.classList.add("fade");
+      }, 250);
+    }
+  }, [ref, change]);
 
   return (
     <div id="book-details">
       {book ? (
-        <div>
+        <div className="box" id={book.name} ref={ref}>
           <h2>{book.name}</h2>
           <p>
             Genre: {book.genre} | Author: {book.author.name}

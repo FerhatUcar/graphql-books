@@ -10,8 +10,8 @@ import { getBooksQuery } from "../queries/queries";
 import BookDetails from "./BookDetails";
 
 interface BookType {
-  id?: number | null;
-  name?: ReactNode | undefined;
+  id?: number;
+  name?: ReactNode;
   selected: number | undefined | null;
 }
 
@@ -20,10 +20,12 @@ const BookList: FC = (props: PropsWithChildren<any>): JSX.Element => {
   const [state, setState] = useState<BookType>({
     selected: null,
   });
+  const [change, setChange] = useState(false);
 
   const selectBook = useCallback(
     (book: BookType) => {
       setState({ selected: book.id });
+      setChange(true);
     },
     [setState]
   );
@@ -43,7 +45,7 @@ const BookList: FC = (props: PropsWithChildren<any>): JSX.Element => {
           })
         )}
       </ul>
-      <BookDetails bookId={state.selected} />
+      <BookDetails change={change} bookId={state.selected} />
     </>
   );
 };
