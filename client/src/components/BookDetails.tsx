@@ -20,7 +20,6 @@ const BookDetails = ({ data, change }: IBookDetails): JSX.Element => {
   const ref: LegacyRef<HTMLDivElement> = createRef();
   const { book } = data;
 
-  // @ts-ignore
   useEffect(() => {
     const div = ref.current;
     div && div.classList.remove("fade");
@@ -33,7 +32,7 @@ const BookDetails = ({ data, change }: IBookDetails): JSX.Element => {
   }, [ref, change]);
 
   return (
-    <div id="book-details">
+    <div id="book-details" className="fadeRight">
       {book ? (
         <div className="box" id={book.name} ref={ref}>
           <h2>{book.name}</h2>
