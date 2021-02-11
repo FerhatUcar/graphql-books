@@ -10,22 +10,8 @@ const {
   GraphQLID,
   GraphQLInt,
   GraphQLList,
+  GraphQLNonNull,
 } = graphql;
-
-// const books = [
-//   { name: "Name of the wind", genre: "Fantasy", id: "1", authorId: "1" },
-//   { name: "The final empire", genre: "Fantasy", id: "2", authorId: "2" },
-//   { name: "The long earth", genre: "Sci-Fi", id: "3", authorId: "3" },
-//   { name: "The hero of ages", genre: "Fantasy", id: "4", authorId: "2" },
-//   { name: "The color of magic", genre: "Fantasy", id: "5", authorId: "3" },
-//   { name: "The light fantastic", genre: "Fantasy", id: "6", authorId: "3" },
-// ];
-//
-// const authors = [
-//   { name: "Patrick Roth", age: 44, id: "1" },
-//   { name: "Brandon Sanderson", age: 42, id: "2" },
-//   { name: "Terry Dick", age: 66, id: "3" },
-// ];
 
 /**
  Schema were you define Object types to connect
@@ -94,13 +80,13 @@ const RootQuery = new GraphQLObjectType({
     },
     books: {
       type: new GraphQLList(BookType),
-      resolve(parent, args) {
+      resolve() {
         return Book.find({});
       },
     },
     authors: {
       type: new GraphQLList(AuthorType),
-      resolve(parent, args) {
+      resolve() {
         return Author.find({});
       },
     },
@@ -127,9 +113,9 @@ const Mutation = new GraphQLObjectType({
     addBook: {
       type: BookType,
       args: {
-        name: { type: GraphQLString },
-        genre: { type: GraphQLString },
-        authorId: { type: GraphQLID },
+        name: { type: new GraphQLNonNull(GraphQLString) },
+        genre: { type: new GraphQLNonNull(GraphQLString) },
+        authorId: { type: new GraphQLNonNull(GraphQLID) },
       },
       resolve(parent, args) {
         let book = new Book({
@@ -138,6 +124,15 @@ const Mutation = new GraphQLObjectType({
           authorId: args.authorId,
         });
         return book.save();
+      },
+    },
+    deleteBook: {
+      type: BookType,
+      args: {
+        id: { type: GraphQLID },
+      },
+      resolve(parent, args) {
+        return Book.findByIdAndRemove(args.id);
       },
     },
   },

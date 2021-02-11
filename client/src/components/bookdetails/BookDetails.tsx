@@ -1,30 +1,19 @@
 import React, { createRef, LegacyRef, useEffect } from "react";
 import { graphql } from "react-apollo";
-import { getBookQuery } from "../queries/queries";
+import { getBookQuery } from "../../queries/queries";
+import { BookDetailsType } from "../../types/types";
+import { BookDetailsBox, Box } from "./BookDetails.style";
 
-interface IBookDetails {
-  data: {
-    book: {
-      name: string;
-      genre: string;
-      author: {
-        name: string;
-        books: string[];
-      };
-    };
-  };
-  change: boolean;
-}
-
-const BookDetails = ({ data, change }: IBookDetails): JSX.Element => {
+const BookDetails = ({ data, change }: BookDetailsType): JSX.Element => {
   const ref: LegacyRef<HTMLDivElement> = createRef();
   const { book } = data;
 
   useEffect(() => {
     const div = ref.current;
-    div && div.classList.remove("fade");
 
     if (change) {
+      div && div.classList.remove("fade");
+
       setTimeout(() => {
         div && div.classList.add("fade");
       }, 250);
@@ -32,9 +21,9 @@ const BookDetails = ({ data, change }: IBookDetails): JSX.Element => {
   }, [ref, change]);
 
   return (
-    <div id="book-details" className="fadeRight">
+    <BookDetailsBox className="fadeRight">
       {book ? (
-        <div className="box" id={book.name} ref={ref}>
+        <Box id={book.name} ref={ref}>
           <h2>{book.name}</h2>
           <p>
             Genre: {book.genre} | Author: {book.author.name}
@@ -45,11 +34,11 @@ const BookDetails = ({ data, change }: IBookDetails): JSX.Element => {
               return <li key={item.id}>{item.name}</li>;
             })}
           </ul>
-        </div>
+        </Box>
       ) : (
         <div>No book selected...</div>
       )}
-    </div>
+    </BookDetailsBox>
   );
 };
 

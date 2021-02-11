@@ -1,4 +1,10 @@
-import React, { ChangeEvent, FormEvent, useCallback, useState } from "react";
+import React, {
+  ChangeEvent,
+  FormEvent,
+  PropsWithChildren,
+  useCallback,
+  useState,
+} from "react";
 import { graphql } from "react-apollo";
 import { flowRight as compose } from "lodash";
 
@@ -7,14 +13,17 @@ import {
   addBookMutation,
   getBooksQuery,
 } from "../queries/queries";
+import { AuthorType } from "../types/types";
 
-const AddBook = (props: any): JSX.Element => {
+const AddBook = ({
+  getAuthorsQuery,
+  addBookMutation,
+}: PropsWithChildren<any>): JSX.Element => {
   const [state, setState] = useState({
     name: "",
     genre: "",
     authorId: "",
   });
-
   const [error, setError] = useState({
     name: false,
     genre: false,
@@ -22,12 +31,12 @@ const AddBook = (props: any): JSX.Element => {
   });
 
   const displayAuthors = () => {
-    const data = props.getAuthorsQuery;
+    const { loading, authors } = getAuthorsQuery;
 
-    if (data.loading) {
+    if (loading) {
       return <option disabled>Loading authors...</option>;
     } else {
-      return data.authors.map((author: any) => {
+      return authors.map((author: AuthorType) => {
         return (
           <option key={author.id} value={author.id}>
             {author.name}
@@ -50,13 +59,13 @@ const AddBook = (props: any): JSX.Element => {
       } else if (authorId === "") {
         setError({ ...error, authorId: true });
       } else {
-        props.addBookMutation({
+        addBookMutation({
           variables: { name, genre, authorId },
           refetchQueries: [{ query: getBooksQuery }],
         });
       }
     },
-    [props, state, error]
+    [addBookMutation, state, error]
   );
 
   const addBookName = useCallback(
@@ -84,7 +93,7 @@ const AddBook = (props: any): JSX.Element => {
   );
 
   return (
-    <form id="add-book" onSubmit={submitForm}>
+    <form onSubmit={submitForm}>
       <div className="field">
         <label>Book name:</label>
         <input
@@ -111,7 +120,7 @@ const AddBook = (props: any): JSX.Element => {
           {displayAuthors()}
         </select>
       </div>
-      <button>+</button>
+      <button>Add book</button>
     </form>
   );
 };
